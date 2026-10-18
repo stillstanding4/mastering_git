@@ -25,5 +25,5 @@ targets:
     workspace:
       host: https://dbc-5cf5ce7b-626f.cloud.databricks.com/
       # We explicitly deploy to /Workspace/Users/stillstanding9997@gmail.com to make sure we only have a single copy.
-      root_path: /Workspace/${bundle.name}/${bundle.target}
+      root_path: /Workspace/
     
