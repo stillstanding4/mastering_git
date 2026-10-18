@@ -1,28 +1,49 @@
-image: python:3.11-slim
+name: Deploy Databricks Bundle to QA
 
-pipelines:
-  branches:
-    qa:
-      - step:
-          name: Deploy Databricks Bundle to QA
-          deployment: QA
-          script:
-            # Install curl
-            - apt-get update
-            - apt-get install -y curl
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
-            # Install Databricks CLI
-            - curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+jobs:
+  deploy:
+    name: Deploy to Databricks QA
+    runs-on: ubuntu-latest
 
-            # Verify installation
-            - databricks version
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            # Configure service principal authentication
-            - export DATABRICKS_AUTH_TYPE="oauth-m2m"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-            # Validate the bundle against the QA target
-            - databricks bundle validate -t qa
+      - name: Install curl
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
 
-            # Deploy the bundle to the QA workspace
-            - databricks bundle deploy -t qa
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
+      - name: Verify Databricks CLI
+        run: databricks version
+
+      - name: Validate Databricks bundle
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+          DATABRICKS_AUTH_TYPE: oauth-m2m
+        run: databricks bundle validate -t qa
+
+      - name: Deploy Databricks bundle
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+          DATABRICKS_AUTH_TYPE: oauth-m2m
+        run: databricks bundle deploy -t qa
