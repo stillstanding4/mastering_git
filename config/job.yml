@@ -1,0 +1,13 @@
+resources:
+  jobs:
+    New_Job_2026_10_18_15_52_10:
+      name: New Job 2026-10-18 15:52:10
+      tasks:
+        - task_key: test_ntb
+          notebook_task:
+            notebook_path: /Workspace/Users/stillstanding9997@gmail.com/mastering_git/script/New
+              Notebook 2026-10-18 15:53:13
+            source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED

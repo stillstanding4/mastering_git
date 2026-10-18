@@ -1,0 +1,28 @@
+image: python:3.11-slim
+
+pipelines:
+  branches:
+    qa:
+      - step:
+          name: Deploy Databricks Bundle to QA
+          deployment: QA
+          script:
+            # Install curl
+            - apt-get update
+            - apt-get install -y curl
+
+            # Install Databricks CLI
+            - curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+            # Verify installation
+            - databricks version
+
+            # Configure service principal authentication
+            - export DATABRICKS_AUTH_TYPE="oauth-m2m"
+
+            # Validate the bundle against the QA target
+            - databricks bundle validate -t qa
+
+            # Deploy the bundle to the QA workspace
+            - databricks bundle deploy -t qa
+```
