@@ -25,4 +25,4 @@ pipelines:
 
             # Deploy the bundle to the QA workspace
             - databricks bundle deploy -t qa
-```
+
